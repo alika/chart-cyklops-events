@@ -1,49 +1,99 @@
 image: registry.cnct.io/venezia/helm-registry-agent:v0.7.4-helm_2.6
 
 variables:
-  IMAGE_DEVL_URI: $CI_REGISTRY_IMAGE:branch-$CI_COMMIT_REF_NAME-$CI_PIPELINE_ID
-  IMAGE_PROD_URI: $CI_REGISTRY_IMAGE:latest
   KUBECONFIG: /root/.kube/config
-  APP: cyklops-events
+  APP_NAME: cyklops-events
+  CHART_NAME: cyklops-events-chart
+  CHART_REGISTRY_URI: ${REGISTRY_HOST}/${REGISTRY_ORG}/${CHART_NAME}
 
 stages:
-  - package
+  - build
   - test
+  - publish
   - staging
   - production
 
-package:
-  stage: package
+build-branch:
+  stage: build
   only:
     - branches
     - master
+  artifacts:
+    paths:
+    - ./${APP_NAME}/Chart.yaml
+    expire_in: 1 week
   script:
-  - echo package chart
+  - export CHART_REL=$(git rev-parse --short HEAD)
+  - export CHART_VER=0.1.1-${CI_COMMIT_REF_SLUG}
+  - envsubst < Chart.yaml.in > ${APP_NAME}/Chart.yaml
+
+build-tags:
+  stage: build
+  only:
+    - tags
+  artifacts:
+    paths:
+    - ./*/Chart.yaml
+    expire_in: 1 week
+  script:
+  - export CHART_VER=${CI_COMMIT_TAG}
+  - export CHART_REL=0
+  - envsubst < Chart.yaml.in > ${APP_NAME}/Chart.yaml
 
 test:
   stage: test
   script:
-  - helm lint ${APP}
+  - cat ${APP_NAME}/Chart.yaml
+  - helm lint ${APP_NAME}
 
-deploy_staging:
+publish-alpha:
+  stage: publish
+  only:
+    - branches
+    - master
+  script:
+  - cd ${APP_NAME}
+  - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
+  - helm registry push ${CHART_REGISTRY_URI} -c alpha
+
+publish-stable:
+  stage: publish
+  only:
+    - tags 
+  script:
+  - cd ${APP_NAME}
+  - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
+  - helm registry push ${CHART_REGISTRY_URI} -c stable
+
+deploy-staging:
   stage: staging
   environment:
     name: staging
   before_script:
   - mkdir /root/.kube
-  - echo ${ENV_KUBECONFIG}
   - echo ${ENV_KUBECONFIG} | base64 -d > ${KUBECONFIG}
   - helm init --client-only
   script:
-  - helm version
-  - helm install --namespace ${APP}-${CI_ENVIRONMENT_SLUG} ${APP} --set registry.dockerConfig=$REGISTRY_DOCKERCFG --debug
+  - cd ${APP_NAME}
+  - export CHART_VER_REL=$(grep version Chart.yaml | cut -d ' ' -f2)
+  - export HELM_APP_NAME="${APP_NAME}-${CI_ENVIRONMENT_SLUG}"
+  - export HELM_OPTS="--install --namespace ${HELM_APP_NAME} --set registry.dockerConfig=$REGISTRY_DOCKERCFG --set victorops.apiKey=$VICTOROPS_API_KEY"
+  - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
+  - helm registry upgrade ${CHART_REGISTRY_URI}@${CHART_VER_REL} -- ${HELM_APP_NAME} ${HELM_OPTS}
 
-deploy_production:
+deploy-production:
   stage: production
   environment:
     name: production
   when: manual
+  before_script:
+  - mkdir /root/.kube
+  - echo ${ENV_KUBECONFIG} | base64 -d > ${KUBECONFIG}
+  - helm init --client-only
   script:
-  - echo TODO add manual approval deploy $IMAGE_PROD_URI to producrtion environment
-  - echo DEBUG CI_ENVIRONMENT_NAME=$CI_ENVIRONMENT_NAME
-  - echo DEBUG CI_ENVIRONMENT_SLUG=$CI_ENVIRONMENT_SLUG
+  - cd ${APP_NAME}
+  - export CHART_VER_REL=$(grep version Chart.yaml | cut -d ' ' -f2)
+  - export HELM_APP_NAME="${APP_NAME}-${CI_ENVIRONMENT_SLUG}"
+  - export HELM_OPTS="--install --namespace ${HELM_APP_NAME} --set registry.dockerConfig=$REGISTRY_DOCKERCFG --set victorops.apiKey=$VICTOROPS_API_KEY"
+  - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
+  - helm registry upgrade ${CHART_REGISTRY_URI}@${CHART_VER_REL} -- ${HELM_APP_NAME} ${HELM_OPTS}

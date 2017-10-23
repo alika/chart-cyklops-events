@@ -1,7 +1,7 @@
 # image reference for cyklops-events container
 image: 
   repository: registry.cnct.io/cyklops/cyklops-events
-  tag: 0.1.0
+  tag: 0.1.1
   # Specify a imagePullPolicy
   #   - 'Always' if imageTag is 'latest', else set to 'IfNotPresent'
   #   - ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -20,5 +20,5 @@ registry:
 
 # Specify VictorOps service configurations
 victorops:
-  accountID: "victorops-test-account"
+  accountID: "20131114"
   apiKey: "victorops-api-key"

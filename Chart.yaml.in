@@ -1,13 +1,12 @@
 name: cyklops-events
 version: ${CHART_VER}-${CHART_REL}
-appVersion: ${APP_VER}-${APP_REL}
 description: cyklops-events event relay
 keywords:
 - cyklops
 - events
-home: https://git.cyklops.io/samsung-cnct/chart-cyklops-events
+home: https://git.cnct.io/cyklops/chart-cyklops-events
 sources:
-   - https://git.cyklops.io/samsung-cnct/chart-cyklops-events
+   - https://git.cnct.io/cyklops/chart-cyklops-events
 maintainers:
 - name: Samsung CNCT
   email: samsung.cloudnative@gmail.com
