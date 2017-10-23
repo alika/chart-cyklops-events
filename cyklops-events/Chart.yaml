@@ -1,0 +1,15 @@
+name: cyklops-events
+version: 0.1.0
+appVersion: 0.1.0
+description: cyklops-events event relay
+keywords:
+- cyklops
+- events
+home: https://git.cnct.io/cyklops/chart-cyklops-events
+sources:
+   - https://git.cnct.io/cyklops/chart-cyklops-events
+maintainers:
+- name: Samsung CNCT
+  email: samsung.cloudnative@gmail.com
+icon: https://github.com/samsung-cnct/solas/docs/images/samsung-logo.svg
+engine: gotpl
