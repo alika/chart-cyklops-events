@@ -1,6 +1,6 @@
 # image reference for cyklops-events container
 image: 
-  repository: registry.cnct.io/cyklops/cyklops-events
+  repository: quay.io/samsung_cnct/cyklops-events
   tag: 0.1.1
   # Specify a imagePullPolicy
   #   - 'Always' if imageTag is 'latest', else set to 'IfNotPresent'
@@ -12,11 +12,6 @@ registry:
   # base64 encoded private registry docker config.json file
   # for quay.io, docker hub, ecr and etc
   dockerConfig: ""
-
-
-# Specify a docker-registry secret for access to private repo
-#   - This secret will need to be created manually in the target namespace
-#imagePullSecrets: registry-cnct-io
 
 # Specify VictorOps service configurations
 victorops:
