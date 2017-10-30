@@ -1,17 +1,15 @@
 # image reference for cyklops-events container
 image: 
-  repository: quay.io/samsung_cnct/cyklops-events
+  name: quay.io/samsung_cnct/cyklops-events
   tag: 0.1.1
-  # Specify a imagePullPolicy
-  #   - 'Always' if imageTag is 'latest', else set to 'IfNotPresent'
+  pullSecretEnabled: false
+  #registry: quay.io
+  #useername: samsung_cnct+cyklops_events_rw
+  #password: supersecret
+  # Specify a image.pullPolicy
+  #   - 'Always' if image.tag is 'latest', else set to 'IfNotPresent'
   #   - ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
   #pullPolicy: 
-
-# Docker registries credentials
-registry:
-  # base64 encoded private registry docker config.json file
-  # for quay.io, docker hub, ecr and etc
-  dockerConfig: ""
 
 # Specify VictorOps service configurations
 victorops:

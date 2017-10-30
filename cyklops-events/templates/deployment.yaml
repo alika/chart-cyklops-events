@@ -14,11 +14,13 @@ spec:
       labels:
         app: {{ template "fullname" . }}
     spec:
+      {{- if .Values.image.pullSecretEnabled }}
       imagePullSecrets:
       - name: {{ template "fullname" . }}-registry
+      {{- end }}
       containers:
       - name: {{ template "fullname" . }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ default "" .Values.image.pullPolicy | quote }}
         ports:
         - containerPort: 8000
