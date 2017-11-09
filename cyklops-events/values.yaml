@@ -1,7 +1,7 @@
 # image reference for cyklops-events container
 image: 
   name: quay.io/samsung_cnct/cyklops-events
-  tag: 0.1.2
+  tag: v0.1.4
   pullSecretEnabled: false
   #registry: quay.io
   #useername: samsung_cnct+cyklops_events_rw
