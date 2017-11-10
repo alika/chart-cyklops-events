@@ -49,8 +49,8 @@ The build, test, publish, and deploy [pipeline for this chart](.gitlab-ci.yml) h
 ### Required CI Settings
 
 - Secret Variables
-  - `REGISTRY_USERNAME`: required fer to publish to registry
-  - `REGISTRY_PASSWORD`: required for to publish to registry
+  - `REGISTRY_USERNAME`: required to publish to registry
+  - `REGISTRY_PASSWORD`: required to publish to registry
   - `TEST_KUBECONFIG`: required to test a deployment of chart This is a base-64 encode kubeconfig.
   - `STAGING_KUBECONFIG`: required to deploy to staging environment. This is a base-64 encoded kubeconfig.
   - `STAGING_VICTOROPS_API_KEY`: required for integration between victorops and cyklops-events staging instance.
