@@ -44,7 +44,6 @@ test:
   - kubectl rollout status deploy/${DEPLOYMENT} -n ${NAMESPACE}
   - helm delete ${RELEASE}
 
-# beta channel is for internal tested release candidates
 publish-beta:
   stage: publish
   only:
@@ -53,7 +52,6 @@ publish-beta:
   - cd ${APP_NAME}
   - helm registry push ${CHART_REGISTRY_URI} -c beta
 
-# prod channel is for official, vetted releases
 publish-prod:
   stage: publish
   only:
