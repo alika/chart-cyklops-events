@@ -36,12 +36,12 @@ test:
   before_script:
   - mkdir /root/.kube
   - echo ${TEST_KUBECONFIG} | base64 -d > /root/.kube/config
-  - helm init ${HELM_OPTS}
+  - helm init
   script:
   - helm lint ${APP_NAME} || exit $?
-  - helm install --name ${RELEASE} --namespace ${NAMESPACE} ${HELM_OPTS} ./${APP_NAME}
-  - helm test ${RELEASE} --cleanup ${HELM_OPTS}
-  - helm delete ${RELEASE} ${HELM_OPTS}
+  - helm install --name ${RELEASE} --namespace ${NAMESPACE} ./${APP_NAME}
+  - helm test ${RELEASE} --cleanup
+  - helm delete ${RELEASE}
 
 publish-beta:
   stage: publish
