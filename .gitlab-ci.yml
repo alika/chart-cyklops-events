@@ -32,7 +32,6 @@ test:
   variables:
     NAMESPACE: ${APP_NAME}-test
     RELEASE: ${NAMESPACE}-$CI_PIPELINE_ID
-    HELM_OPTS: --tiller-namespace ${APP_NAME}-test
   before_script:
   - mkdir /root/.kube
   - echo ${TEST_KUBECONFIG} | base64 -d > /root/.kube/config
