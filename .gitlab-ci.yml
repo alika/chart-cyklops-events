@@ -32,15 +32,16 @@ test:
   variables:
     NAMESPACE: ${APP_NAME}-test
     RELEASE: ${NAMESPACE}-$CI_PIPELINE_ID
+    HELM_OPTS: --tiller-namespace ${NAMESPACE}
   before_script:
   - mkdir /root/.kube
   - echo ${TEST_KUBECONFIG} | base64 -d > /root/.kube/config
-  - helm init
+  - helm init ${HELM_OPTS}
   script:
   - helm lint ${APP_NAME} || exit $?
-  - helm install --name ${RELEASE} --namespace ${NAMESPACE} ./${APP_NAME}
-  - helm test ${RELEASE} --cleanup
-  - helm delete ${RELEASE}
+  - helm install --name ${RELEASE} --namespace ${NAMESPACE} ${HELM_OPTS} ./${APP_NAME}
+  - helm test ${RELEASE} --cleanup ${HELM_OPTS}
+  - helm delete ${RELEASE} ${HELM_OPTS}
 
 publish-beta:
   stage: publish
