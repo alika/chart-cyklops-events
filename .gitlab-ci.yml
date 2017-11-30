@@ -28,12 +28,10 @@ build:
   - envsubst < build/Chart.yaml.in > ${APP_NAME}/Chart.yaml
 
 test:
-  image: quay.io/samsung_cnct/kraken-tools:v0.8
   stage: test
   variables:
     NAMESPACE: ${APP_NAME}-test
     RELEASE: ${NAMESPACE}-$CI_PIPELINE_ID
-    DEPLOYMENT: ${RELEASE}-${APP_NAME}
   before_script:
   - mkdir /root/.kube
   - echo ${TEST_KUBECONFIG} | base64 -d > /root/.kube/config
@@ -41,7 +39,7 @@ test:
   script:
   - helm lint ${APP_NAME} || exit $?
   - helm install --name ${RELEASE} --namespace ${NAMESPACE} ./${APP_NAME}
-  - kubectl rollout status deploy/${DEPLOYMENT} -n ${NAMESPACE}
+  - helm test ${RELEASE} --cleanup
   - helm delete ${RELEASE}
 
 publish-beta:
